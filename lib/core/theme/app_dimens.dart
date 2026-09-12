@@ -9,6 +9,9 @@ abstract final class AppDimens {
   static const sidebarPaddingTop = 30.0;
   static const logoSize = 32.0;
 
+  /// ロゴとサービス名の間隔。
+  static const serviceNameGap = 4.0;
+
   static const menuTileWidth = 240.0;
   static const menuTileHeight = 44.0;
 

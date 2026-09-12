@@ -7,6 +7,7 @@ import 'package:notebook_editor/presentation/components/app_button_style.dart';
 import 'package:notebook_editor/presentation/components/app_icon.dart';
 import 'package:notebook_editor/presentation/components/app_icon_button.dart';
 import 'package:notebook_editor/presentation/components/content_tile.dart';
+import 'package:notebook_editor/presentation/components/service_name.dart';
 
 /// コンポーネントの見た目を確認するための使い捨てのエントリポイント。
 /// hover と pressed は実際にポインタを載せないと確認できないため Chrome で起動する。
@@ -38,6 +39,10 @@ class _Gallery extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text('ServiceName / ロゴ 32px'),
+          const SizedBox(height: 8),
+          const ServiceName(),
+          const SizedBox(height: 40),
           const _Row(
             title: 'primary / 幅 90',
             style: AppButtonStyle.primary,

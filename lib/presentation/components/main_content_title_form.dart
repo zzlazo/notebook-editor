@@ -16,6 +16,12 @@ class MainContentTitleForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      buildCounter: (
+        context, {
+        required currentLength,
+        required isFocused,
+        required maxLength,
+      }) => null,
       maxLength: maxLength,
       controller: controller,
       maxLines: 1,

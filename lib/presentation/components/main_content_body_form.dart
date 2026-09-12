@@ -16,6 +16,12 @@ class MainContentBodyForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      buildCounter: (
+        context, {
+        required currentLength,
+        required isFocused,
+        required maxLength,
+      }) => null,
       controller: controller,
       maxLength: maxLength,
       style: Theme.of(context).textTheme.bodyMedium,

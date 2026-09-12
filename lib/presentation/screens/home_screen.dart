@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
 import 'package:notebook_editor/models/create_content_dto.dart';
 import 'package:notebook_editor/models/update_content_dto.dart';
@@ -15,8 +16,8 @@ import 'package:notebook_editor/presentation/components/main_content_title.dart'
 import 'package:notebook_editor/presentation/components/main_content_title_form.dart';
 import 'package:notebook_editor/providers/notebook_providers.dart';
 
-class HomeScreen extends ConsumerWidget {
-  const new({super.key});
+class HomeScreen extends HookConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,75 +35,81 @@ class HomeScreen extends ConsumerWidget {
     final bodyFormKey = useMemoized(() => GlobalKey<FormState>());
     final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
     return AppScaffold(
-      sideberBody: Column(
-        children: [
-          Expanded(
-            child: contents.value == null
-                ? SizedBox.shrink()
-                : ListView.builder(
-                    itemCount: (contents.value!).length,
-                    itemBuilder: (context, index) {
-                      final content = contents.value![index];
-                      return ContentTile(
-                        title: content.title,
-                        selected: selectedContentId.value == content.id,
-                        onTap: () {
-                          selectedContentId.value = content.id;
-                          titleController.text = content.title;
-                          bodyController.text = content.body;
+      sideberBody: SizedBox(
+        width: 100,
+        child: Column(
+          children: [
+            Expanded(
+              child: contents.value == null
+                  ? SizedBox.shrink()
+                  : ListView.builder(
+                      itemCount: (contents.value!).length,
+                      itemBuilder: (context, index) {
+                        final content = contents.value![index];
+                        return ContentTile(
+                          title: content.title,
+                          selected: selectedContentId.value == content.id,
+                          onTap: () {
+                            selectedContentId.value = content.id;
+                            titleController.text = content.title;
+                            bodyController.text = content.body;
+                          },
+                          trailing: isEditingMenu.value
+                              ? AppIconButton(
+                                  icon: AppIcon(AppIcons.delete),
+                                  onPressed: () {
+                                    ref
+                                        .read(contentsProvider.notifier)
+                                        .delete(content.id);
+                                  },
+                                )
+                              : null,
+                        );
+                      },
+                    ),
+            ),
+            isEditingMenu.value
+                ? Row(
+                    spacing: 10,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AppButton.secondary(
+                        icon: AppIcon(AppIcons.plus),
+                        label: "New Page",
+                        onPressed: () {
+                          ref
+                              .read(contentsProvider.notifier)
+                              .create(
+                                CreateContentDTO(
+                                  title: "無題",
+                                  body: "新しいページです。",
+                                ),
+                              );
                         },
-                        trailing: isEditingMenu.value
-                            ? AppIconButton(
-                                icon: AppIcon(AppIcons.delete),
-                                onPressed: () {
-                                  ref
-                                      .read(contentsProvider.notifier)
-                                      .delete(content.id);
-                                },
-                              )
-                            : null,
-                      );
-                    },
+                      ),
+                      AppButton.primary(
+                        icon: AppIcon(AppIcons.done),
+                        label: "Done",
+                        onPressed: () {
+                          isEditingMenu.value = false;
+                        },
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      AppButton.primary(
+                        icon: AppIcon(AppIcons.edit),
+                        label: "Edit",
+                        onPressed: () {
+                          isEditingMenu.value = true;
+                        },
+                      ),
+                    ],
                   ),
-          ),
-          isEditingBody.value
-              ? Row(
-                  spacing: 10,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppButton.secondary(
-                      icon: AppIcon(AppIcons.plus),
-                      label: "New Page",
-                      onPressed: () {
-                        ref
-                            .read(contentsProvider.notifier)
-                            .create(
-                              CreateContentDTO(title: "無題", body: "新しいページです。"),
-                            );
-                      },
-                    ),
-                    AppButton.primary(
-                      icon: AppIcon(AppIcons.done),
-                      label: "Done",
-                      onPressed: () {
-                        isEditingMenu.value = false;
-                      },
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    AppButton.primary(
-                      icon: AppIcon(AppIcons.edit),
-                      label: "Edit",
-                      onPressed: () {
-                        isEditingMenu.value = true;
-                      },
-                    ),
-                  ],
-                ),
-        ],
+          ],
+        ),
       ),
       contentArea: selectedContent?.value == null
           ? SizedBox.shrink()
@@ -147,8 +154,7 @@ class HomeScreen extends ConsumerWidget {
                                                       1 &&
                                                   titleController.text.length <=
                                                       50)
-                                              ? null
-                                              : () async {
+                                              ? () async {
                                                   if (!titleFormKey
                                                       .currentState!
                                                       .validate()) {
@@ -175,7 +181,8 @@ class HomeScreen extends ConsumerWidget {
                                                       selectedContent
                                                           .value!
                                                           .title;
-                                                },
+                                                }
+                                              : null,
                                           width: AppDimens.buttonMinWidth,
                                         ),
                                       ],
@@ -320,8 +327,7 @@ class HomeScreen extends ConsumerWidget {
                                                       5 &&
                                                   bodyController.text.length <=
                                                       2000)
-                                              ? null
-                                              : () async {
+                                              ? () async {
                                                   if (!bodyFormKey.currentState!
                                                       .validate()) {
                                                     return;
@@ -348,7 +354,8 @@ class HomeScreen extends ConsumerWidget {
                                                       selectedContent
                                                           .value!
                                                           .body;
-                                                },
+                                                }
+                                              : null,
                                           width: AppDimens.buttonMinWidth,
                                         ),
                                       ],
@@ -385,8 +392,7 @@ class HomeScreen extends ConsumerWidget {
                                                       5 &&
                                                   bodyController.text.length <=
                                                       2000)
-                                              ? null
-                                              : () async {
+                                              ? () async {
                                                   if (!bodyFormKey.currentState!
                                                       .validate()) {
                                                     return;
@@ -413,7 +419,8 @@ class HomeScreen extends ConsumerWidget {
                                                       selectedContent
                                                           .value!
                                                           .body;
-                                                },
+                                                }
+                                              : null,
                                           width: AppDimens.buttonMinWidth,
                                         ),
                                       ],
@@ -440,9 +447,12 @@ class HomeScreen extends ConsumerWidget {
                         )
                       : Column(
                           spacing: AppDimens.mainBoxAndButtonGap,
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            MainContentBody(text: selectedContent!.value!.body),
+                            Expanded(
+                              child: MainContentBody(
+                                text: selectedContent!.value!.body,
+                              ),
+                            ),
                             AppButton.primary(
                               icon: AppIcon(AppIcons.edit),
                               label: "Edit",

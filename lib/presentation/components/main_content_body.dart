@@ -9,9 +9,11 @@ class MainContentBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.backgroundLight,
+      color: AppColors.contentBodyBackground,
       padding: EdgeInsets.all(30),
-      child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+      child: SingleChildScrollView(
+        child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+      ),
     );
   }
 }

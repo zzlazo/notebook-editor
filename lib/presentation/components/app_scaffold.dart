@@ -16,52 +16,62 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.sizeOf(context).aspectRatio > 1) {
-      return Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 30, left: 40, right: 10),
-            child: Column(
-              spacing: AppDimens.sideberVerticalGap,
-              children: [
-                ServiceName(),
-                Expanded(child: sideberBody),
-              ],
+      return Scaffold(
+        body: Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 30, left: 40, right: 10),
+              child: Column(
+                spacing: AppDimens.sideberVerticalGap,
+                children: [
+                  ServiceName(),
+                  Expanded(child: sideberBody),
+                ],
+              ),
             ),
-          ),
-          VerticalDivider(width: 1, color: AppColors.divider),
-          Column(
-            children: [
-              Expanded(
-                child: Container(
-                  color: AppColors.backgroundLight,
-                  margin: EdgeInsets.only(top: 30, left: 40, right: 40),
-                  padding: EdgeInsets.all(30),
-                  child: contentArea,
-                ),
-              ),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Copyright © 2021 Sample",
-                      style: Theme.of(context).textTheme.bodySmall,
+            VerticalDivider(width: 1, color: AppColors.divider),
+            Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      color: AppColors.backgroundLight,
+                      margin: EdgeInsets.only(top: 30, left: 40, right: 40),
+                      padding: EdgeInsets.all(30),
+                      child: contentArea,
                     ),
-                    Text("運営会社", style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40),
+                    height: 60,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Copyright © 2021 Sample",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        Text(
+                          "運営会社",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       );
     }
     return Scaffold(
       appBar: AppBar(title: ServiceName()),
       drawer: sideberBody,
       body: Column(
+        spacing: 20,
         children: [
           Expanded(
             child: Container(
@@ -73,9 +83,9 @@ class AppScaffold extends StatelessWidget {
           ),
           SizedBox(
             height: 60,
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Copyright © 2021 Sample",

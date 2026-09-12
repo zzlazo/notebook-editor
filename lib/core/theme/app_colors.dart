@@ -10,6 +10,7 @@ abstract final class AppColors {
   static const buttonNormal = Color(0xFFB3B3B3);
   static const backgroundLight = Color(0xFFF5F8FA);
   static const backgroundDark = Color(0xFFC8E6FA);
+  static const contentBodyBackground = Color(0xFFFFFFFF);
 
   // ── 実画面にのみ現れる値 ──────────────────────────────
 

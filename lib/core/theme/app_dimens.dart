@@ -12,6 +12,8 @@ abstract final class AppDimens {
   /// ロゴとサービス名の間隔。
   static const serviceNameGap = 4.0;
 
+  static const sideberVerticalGap = 20.0;
+
   static const menuTileWidth = 240.0;
   static const menuTileHeight = 44.0;
 
@@ -66,4 +68,6 @@ abstract final class AppDimens {
   // ── 入力欄 ────────────────────────────────────────────
 
   static const inputBorderWidth = 1.0;
+
+  static const mainVerticalGap = 20.0;
 }

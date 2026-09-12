@@ -11,7 +11,12 @@ abstract final class AppDimens {
 
   static const menuTileWidth = 240.0;
   static const menuTileHeight = 44.0;
-  static const menuTileTextInset = 10.0;
+
+  /// タイルの左右の内側余白。
+  static const menuTilePadding = 10.0;
+
+  /// タイトルと右端のウィジェットの間隔。
+  static const menuTileGap = 10.0;
 
   static const dividerWidth = 1.0;
 
@@ -49,6 +54,11 @@ abstract final class AppDimens {
   /// アイコンとラベルは上寄せで、余りが下に来る。
   static const buttonPaddingTop = 2.0;
   static const buttonPaddingBottom = 4.0;
+
+  // ── アイコンのみのボタン ──────────────────────────────
+
+  static const iconButtonSize = 24.0;
+  static const iconButtonIconSize = 20.0;
 
   // ── 入力欄 ────────────────────────────────────────────
 

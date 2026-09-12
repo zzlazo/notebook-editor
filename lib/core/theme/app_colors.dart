@@ -33,9 +33,19 @@ abstract final class AppColors {
   static const normalHovered = Color(0xFF999999);
   static const normalPressed = Color(0xFF808080);
 
-  /// アイコンのみのボタンは通常時に背景を持たないため、normal に対応する値がない。
+  /// アイコンのみのボタンは通常時に背景を持たないため、background に対応する値がない。
   static const iconHovered = Color(0xFFE6E6E6);
   static const iconPressed = Color(0xFFCCCCCC);
+
+  /// アイコンのみのボタンのアイコン自体の色。
+  static const iconForeground = Color(0xFFB3B3B3);
+
+  // ── サイドバーの一覧項目 ──────────────────────────────
+  // hover と押下は仕様に定義が無い。[A01] の背景色 2 色の範囲で表現している。
+
+  static const menuTileSelected = Color(0xFFF5F8FA);
+  static const menuTileHovered = Color(0xFFF5F8FA);
+  static const menuTilePressed = Color(0xFFC8E6FA);
 
   /// disabled は色を差し替えず不透明度で表現する。バリアント共通。
   static const disabledOpacity = 0.25;

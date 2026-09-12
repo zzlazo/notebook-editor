@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
+import 'package:notebook_editor/core/validation.dart';
 import 'package:notebook_editor/models/create_content_dto.dart';
 import 'package:notebook_editor/models/update_content_dto.dart';
 import 'package:notebook_editor/presentation/components/app_button.dart';
@@ -34,6 +35,8 @@ class HomeScreen extends HookConsumerWidget {
     final titleFormKey = useMemoized(() => GlobalKey<FormState>());
     final bodyFormKey = useMemoized(() => GlobalKey<FormState>());
     final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
+    final titleIsValid = TitleValidation.isValid(titleController.text);
+    final bodyIsValid = BodyValidation.isValid(bodyController.text);
     return AppScaffold(
       sideberBody: SizedBox(
         width: 100,
@@ -127,8 +130,8 @@ class HomeScreen extends HookConsumerWidget {
                                   children: [
                                     Expanded(
                                       child: MainContentTitleForm(
-                                        maxLength: 50,
-                                        minLength: 1,
+                                        maxLength: TitleValidation.maxLength,
+                                        minLength: TitleValidation.minLength,
                                         controller: titleController,
                                       ),
                                     ),
@@ -150,10 +153,7 @@ class HomeScreen extends HookConsumerWidget {
                                           label: 'Save',
                                           onPressed:
                                               // ignore: prefer_is_empty
-                                              (titleController.text.length >=
-                                                      1 &&
-                                                  titleController.text.length <=
-                                                      50)
+                                              titleIsValid
                                               ? () async {
                                                   if (!titleFormKey
                                                       .currentState!
@@ -194,8 +194,8 @@ class HomeScreen extends HookConsumerWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     MainContentTitleForm(
-                                      maxLength: 50,
-                                      minLength: 1,
+                                      maxLength: TitleValidation.maxLength,
+                                      minLength: TitleValidation.minLength,
                                       controller: titleController,
                                     ),
                                     Row(
@@ -216,12 +216,8 @@ class HomeScreen extends HookConsumerWidget {
                                           label: 'Save',
                                           onPressed:
                                               // ignore: prefer_is_empty
-                                              (titleController.text.length >=
-                                                      1 &&
-                                                  titleController.text.length <=
-                                                      50)
-                                              ? null
-                                              : () async {
+                                              titleIsValid
+                                              ? () async {
                                                   if (!titleFormKey
                                                       .currentState!
                                                       .validate()) {
@@ -248,7 +244,8 @@ class HomeScreen extends HookConsumerWidget {
                                                       selectedContent
                                                           .value!
                                                           .title;
-                                                },
+                                                }
+                                              : null,
                                           width: AppDimens.buttonMinWidth,
                                         ),
                                       ],
@@ -322,11 +319,7 @@ class HomeScreen extends HookConsumerWidget {
                                         AppButton.primary(
                                           icon: const AppIcon(AppIcons.save),
                                           label: 'Save',
-                                          onPressed:
-                                              (bodyController.text.length >=
-                                                      5 &&
-                                                  bodyController.text.length <=
-                                                      2000)
+                                          onPressed: bodyIsValid
                                               ? () async {
                                                   if (!bodyFormKey.currentState!
                                                       .validate()) {
@@ -387,11 +380,7 @@ class HomeScreen extends HookConsumerWidget {
                                         AppButton.primary(
                                           icon: const AppIcon(AppIcons.save),
                                           label: 'Save',
-                                          onPressed:
-                                              (bodyController.text.length >=
-                                                      5 &&
-                                                  bodyController.text.length <=
-                                                      2000)
+                                          onPressed: bodyIsValid
                                               ? () async {
                                                   if (!bodyFormKey.currentState!
                                                       .validate()) {

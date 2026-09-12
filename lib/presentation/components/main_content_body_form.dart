@@ -35,7 +35,7 @@ class MainContentBodyForm extends StatelessWidget {
         if (value == null || value.length < minLength) {
           return "$minLength文字以上にしてください";
         } else if (value.length > maxLength) {
-          return "$minLength文字以下にしてください";
+          return "$maxLength文字以下にしてください";
         }
         return null;
       },

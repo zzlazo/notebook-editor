@@ -3,7 +3,10 @@ import 'package:notebook_editor/core/theme/app_colors.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
 import 'package:notebook_editor/core/theme/app_theme.dart';
 import 'package:notebook_editor/presentation/components/app_button.dart';
+import 'package:notebook_editor/presentation/components/app_button_style.dart';
 import 'package:notebook_editor/presentation/components/app_icon.dart';
+import 'package:notebook_editor/presentation/components/app_icon_button.dart';
+import 'package:notebook_editor/presentation/components/content_tile.dart';
 
 /// コンポーネントの見た目を確認するための使い捨てのエントリポイント。
 /// hover と pressed は実際にポインタを載せないと確認できないため Chrome で起動する。
@@ -60,6 +63,59 @@ class _Gallery extends StatelessWidget {
             style: AppButtonStyle.normal,
             asset: AppIcons.cancel,
             label: 'Cancel',
+          ),
+          const Text('AppIconButton（削除）/ 24px'),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              AppIconButton(
+                icon: const AppIcon(AppIcons.delete),
+                onPressed: () {},
+              ),
+              const SizedBox(width: 40),
+              const AppIconButton(
+                icon: AppIcon(AppIcons.delete),
+                onPressed: null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          const Text('ContentTile / 幅 240'),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: AppDimens.menuTileWidth,
+            child: Column(
+              children: [
+                ContentTile(
+                  title: 'こころ',
+                  selected: false,
+                  onTap: () {},
+                ),
+                ContentTile(
+                  title: '坊ちゃん',
+                  selected: true,
+                  onTap: () {},
+                ),
+                ContentTile(
+                  title: '我輩は猫である',
+                  selected: false,
+                  onTap: () {},
+                  trailing: AppIconButton(
+                    icon: const AppIcon(AppIcons.delete),
+                    onPressed: () {},
+                  ),
+                ),
+                ContentTile(
+                  title: 'とても長いタイトルが入力された場合にどこで省略されるかの確認用',
+                  selected: false,
+                  onTap: () {},
+                  trailing: AppIconButton(
+                    icon: const AppIcon(AppIcons.delete),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 40),
           const Text('40px に収まっているかの確認（背景の帯がちょうど 40px）'),

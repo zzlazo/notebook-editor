@@ -30,7 +30,9 @@ class HomeScreen extends ConsumerWidget {
     final isEditingBody = useState<bool>(false);
     final contents = ref.watch(contentsProvider);
     final isEditingMenu = useState<bool>(false);
-    final formKey = useMemoized(() => GlobalKey<FormState>());
+    final titleFormKey = useMemoized(() => GlobalKey<FormState>());
+    final bodyFormKey = useMemoized(() => GlobalKey<FormState>());
+    final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
     return AppScaffold(
       sideberBody: Column(
         children: [
@@ -102,115 +104,355 @@ class HomeScreen extends ConsumerWidget {
                 ),
         ],
       ),
-      contentTitleArea: selectedContent?.value == null
+      contentArea: selectedContent?.value == null
           ? SizedBox.shrink()
-          : Row(
+          : Column(
+              spacing: AppDimens.mainVerticalGap,
               children: [
-                Expanded(
+                SizedBox(
+                  height: 40,
                   child: isEditingTitle.value
-                      ? MainContentTitleForm(
-                          maxLength: 50,
-                          controller: titleController,
-                        )
-                      : MainContentTitle(title: selectedContent!.value!.title),
-                ),
-                isEditingTitle.value
-                    ? Row(
-                        spacing: 10,
-                        children: [
-                          AppButton.normal(
-                            icon: const AppIcon(AppIcons.cancel),
-                            label: 'Cancel',
-                            onPressed: () {
-                              isEditingTitle.value = false;
-                              titleController.text =
-                                  selectedContent!.value!.title;
-                            },
-                            width: AppDimens.buttonMinWidth,
-                          ),
-                          AppButton.primary(
-                            icon: const AppIcon(AppIcons.save),
-                            label: 'Save',
-                            onPressed: () async {
-                              await ref
-                                  .read(contentsProvider.notifier)
-                                  .save(
-                                    selectedContentId.value!,
-                                    UpdateContentDTO(
-                                      title: titleController.text,
-                                      body: selectedContent!.value!.body,
+                      ? Form(
+                          key: titleFormKey,
+                          child: isPC
+                              ? Row(
+                                  spacing: AppDimens.mainBoxAndButtonGap,
+                                  children: [
+                                    Expanded(
+                                      child: MainContentTitleForm(
+                                        maxLength: 50,
+                                        minLength: 1,
+                                        controller: titleController,
+                                      ),
                                     ),
-                                  );
-                              isEditingTitle.value = false;
-                              titleController.text =
-                                  selectedContent.value!.title;
-                            },
-                            width: AppDimens.buttonMinWidth,
-                          ),
-                        ],
-                      )
-                    : AppButton.primary(
-                        icon: AppIcon(AppIcons.edit),
-                        label: "Edit",
-                        onPressed: () {
-                          isEditingTitle.value = true;
-                        },
-                      ),
-              ],
-            ),
-      contentBodyArea: selectedContent?.value == null
-          ? SizedBox.shrink()
-          : Row(
-              children: [
+                                    Row(
+                                      spacing: 10,
+                                      children: [
+                                        AppButton.normal(
+                                          icon: const AppIcon(AppIcons.cancel),
+                                          label: 'Cancel',
+                                          onPressed: () {
+                                            isEditingTitle.value = false;
+                                            titleController.text =
+                                                selectedContent!.value!.title;
+                                          },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                        AppButton.primary(
+                                          icon: const AppIcon(AppIcons.save),
+                                          label: 'Save',
+                                          onPressed:
+                                              // ignore: prefer_is_empty
+                                              (titleController.text.length >=
+                                                      1 &&
+                                                  titleController.text.length <=
+                                                      50)
+                                              ? null
+                                              : () async {
+                                                  if (!titleFormKey
+                                                      .currentState!
+                                                      .validate()) {
+                                                    return;
+                                                  }
+                                                  await ref
+                                                      .read(
+                                                        contentsProvider
+                                                            .notifier,
+                                                      )
+                                                      .save(
+                                                        selectedContentId
+                                                            .value!,
+                                                        UpdateContentDTO(
+                                                          title: titleController
+                                                              .text,
+                                                          body: selectedContent!
+                                                              .value!
+                                                              .body,
+                                                        ),
+                                                      );
+                                                  isEditingTitle.value = false;
+                                                  titleController.text =
+                                                      selectedContent
+                                                          .value!
+                                                          .title;
+                                                },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  spacing: 20,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    MainContentTitleForm(
+                                      maxLength: 50,
+                                      minLength: 1,
+                                      controller: titleController,
+                                    ),
+                                    Row(
+                                      spacing: 10,
+                                      children: [
+                                        AppButton.normal(
+                                          icon: const AppIcon(AppIcons.cancel),
+                                          label: 'Cancel',
+                                          onPressed: () {
+                                            isEditingTitle.value = false;
+                                            titleController.text =
+                                                selectedContent!.value!.title;
+                                          },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                        AppButton.primary(
+                                          icon: const AppIcon(AppIcons.save),
+                                          label: 'Save',
+                                          onPressed:
+                                              // ignore: prefer_is_empty
+                                              (titleController.text.length >=
+                                                      1 &&
+                                                  titleController.text.length <=
+                                                      50)
+                                              ? null
+                                              : () async {
+                                                  if (!titleFormKey
+                                                      .currentState!
+                                                      .validate()) {
+                                                    return;
+                                                  }
+                                                  await ref
+                                                      .read(
+                                                        contentsProvider
+                                                            .notifier,
+                                                      )
+                                                      .save(
+                                                        selectedContentId
+                                                            .value!,
+                                                        UpdateContentDTO(
+                                                          title: titleController
+                                                              .text,
+                                                          body: selectedContent!
+                                                              .value!
+                                                              .body,
+                                                        ),
+                                                      );
+                                                  isEditingTitle.value = false;
+                                                  titleController.text =
+                                                      selectedContent
+                                                          .value!
+                                                          .title;
+                                                },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                        )
+                      : isPC
+                      ? Row(
+                          spacing: AppDimens.mainBoxAndButtonGap,
+                          children: [
+                            Expanded(
+                              child: MainContentTitle(
+                                title: selectedContent!.value!.title,
+                              ),
+                            ),
+                            AppButton.primary(
+                              icon: AppIcon(AppIcons.edit),
+                              label: "Edit",
+                              onPressed: () {
+                                isEditingTitle.value = true;
+                              },
+                            ),
+                          ],
+                        )
+                      : Column(
+                          spacing: AppDimens.mainBoxAndButtonGap,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MainContentTitle(
+                              title: selectedContent!.value!.title,
+                            ),
+                            AppButton.primary(
+                              icon: AppIcon(AppIcons.edit),
+                              label: "Edit",
+                              onPressed: () {
+                                isEditingTitle.value = true;
+                              },
+                            ),
+                          ],
+                        ),
+                ),
                 Expanded(
                   child: isEditingBody.value
-                      ? MainContentBodyForm(
-                          maxLength: 2000,
-                          controller: bodyController,
-                        )
-                      : MainContentBody(text: selectedContent!.value!.body),
-                ),
-                isEditingBody.value
-                    ? Row(
-                        spacing: 10,
-                        children: [
-                          AppButton.normal(
-                            icon: const AppIcon(AppIcons.cancel),
-                            label: 'Cancel',
-                            onPressed: () {
-                              isEditingBody.value = false;
-                              bodyController.text =
-                                  selectedContent!.value!.body;
-                            },
-                            width: AppDimens.buttonMinWidth,
-                          ),
-                          AppButton.primary(
-                            icon: const AppIcon(AppIcons.save),
-                            label: 'Save',
-                            onPressed: () async {
-                              await ref
-                                  .read(contentsProvider.notifier)
-                                  .save(
-                                    selectedContentId.value!,
-                                    UpdateContentDTO(
-                                      title: selectedContent!.value!.title,
-                                      body: bodyController.text,
+                      ? Form(
+                          key: bodyFormKey,
+                          child: isPC
+                              ? Row(
+                                  spacing: 20,
+                                  children: [
+                                    Expanded(
+                                      child: MainContentBodyForm(
+                                        minLength: 5,
+                                        maxLength: 2000,
+                                        controller: bodyController,
+                                      ),
                                     ),
-                                  );
-                              isEditingBody.value = false;
-                              bodyController.text = selectedContent.value!.body;
-                            },
-                            width: AppDimens.buttonMinWidth,
-                          ),
-                        ],
-                      )
-                    : AppButton.primary(
-                        icon: AppIcon(AppIcons.edit),
-                        label: "Edit",
-                        onPressed: () {
-                          isEditingBody.value = true;
-                        },
-                      ),
+                                    Row(
+                                      spacing: 10,
+                                      children: [
+                                        AppButton.normal(
+                                          icon: const AppIcon(AppIcons.cancel),
+                                          label: 'Cancel',
+                                          onPressed: () {
+                                            isEditingBody.value = false;
+                                            bodyController.text =
+                                                selectedContent!.value!.body;
+                                          },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                        AppButton.primary(
+                                          icon: const AppIcon(AppIcons.save),
+                                          label: 'Save',
+                                          onPressed:
+                                              (bodyController.text.length >=
+                                                      5 &&
+                                                  bodyController.text.length <=
+                                                      2000)
+                                              ? null
+                                              : () async {
+                                                  if (!bodyFormKey.currentState!
+                                                      .validate()) {
+                                                    return;
+                                                  }
+                                                  await ref
+                                                      .read(
+                                                        contentsProvider
+                                                            .notifier,
+                                                      )
+                                                      .save(
+                                                        selectedContentId
+                                                            .value!,
+                                                        UpdateContentDTO(
+                                                          title:
+                                                              selectedContent!
+                                                                  .value!
+                                                                  .title,
+                                                          body: bodyController
+                                                              .text,
+                                                        ),
+                                                      );
+                                                  isEditingBody.value = false;
+                                                  bodyController.text =
+                                                      selectedContent
+                                                          .value!
+                                                          .body;
+                                                },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  spacing: AppDimens.mainBoxAndButtonGap,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    MainContentBodyForm(
+                                      minLength: 5,
+                                      maxLength: 2000,
+                                      controller: bodyController,
+                                    ),
+                                    Row(
+                                      spacing: 10,
+                                      children: [
+                                        AppButton.normal(
+                                          icon: const AppIcon(AppIcons.cancel),
+                                          label: 'Cancel',
+                                          onPressed: () {
+                                            isEditingBody.value = false;
+                                            bodyController.text =
+                                                selectedContent!.value!.body;
+                                          },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                        AppButton.primary(
+                                          icon: const AppIcon(AppIcons.save),
+                                          label: 'Save',
+                                          onPressed:
+                                              (bodyController.text.length >=
+                                                      5 &&
+                                                  bodyController.text.length <=
+                                                      2000)
+                                              ? null
+                                              : () async {
+                                                  if (!bodyFormKey.currentState!
+                                                      .validate()) {
+                                                    return;
+                                                  }
+                                                  await ref
+                                                      .read(
+                                                        contentsProvider
+                                                            .notifier,
+                                                      )
+                                                      .save(
+                                                        selectedContentId
+                                                            .value!,
+                                                        UpdateContentDTO(
+                                                          title:
+                                                              selectedContent!
+                                                                  .value!
+                                                                  .title,
+                                                          body: bodyController
+                                                              .text,
+                                                        ),
+                                                      );
+                                                  isEditingBody.value = false;
+                                                  bodyController.text =
+                                                      selectedContent
+                                                          .value!
+                                                          .body;
+                                                },
+                                          width: AppDimens.buttonMinWidth,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                        )
+                      : isPC
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: MainContentBody(
+                                text: selectedContent!.value!.body,
+                              ),
+                            ),
+                            AppButton.primary(
+                              icon: AppIcon(AppIcons.edit),
+                              label: "Edit",
+                              onPressed: () {
+                                isEditingBody.value = true;
+                              },
+                            ),
+                          ],
+                        )
+                      : Column(
+                          spacing: AppDimens.mainBoxAndButtonGap,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MainContentBody(text: selectedContent!.value!.body),
+                            AppButton.primary(
+                              icon: AppIcon(AppIcons.edit),
+                              label: "Edit",
+                              onPressed: () {
+                                isEditingBody.value = true;
+                              },
+                            ),
+                          ],
+                        ),
+                ),
               ],
             ),
     );

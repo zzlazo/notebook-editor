@@ -6,10 +6,12 @@ class MainContentTitleForm extends StatelessWidget {
     super.key,
     this.controller,
     required this.maxLength,
+    required this.minLength,
   });
 
   final TextEditingController? controller;
   final int maxLength;
+  final int minLength;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,14 @@ class MainContentTitleForm extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.brand, width: 1),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.length < minLength) {
+          return "$minLength文字以上にしてください";
+        } else if (value.length > maxLength) {
+          return "$minLength文字以下にしてください";
+        }
+        return null;
+      },
     );
   }
 }

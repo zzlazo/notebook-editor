@@ -32,6 +32,7 @@ abstract final class AppDimens {
 
   static const contentMargin = 30.0;
   static const cardPadding = 30.0;
+  static const mainBoxAndButtonGap = 20.0;
 
   // ── 角丸 ──────────────────────────────────────────────
 

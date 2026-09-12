@@ -19,8 +19,8 @@ abstract final class AppColors {
   static const scrollbar = Color(0xFFB3B3B3);
 
   /// 実データは `#F6F8FA` だが、[backgroundLight] と R が 1 違うだけで
-  /// 目視では区別できないため、配色の統一を優先して [A01] の値に寄せている。
-  static const divider = backgroundLight;
+  /// 目視では区別できないため、配色の統一を優先して [A01] の値に合わせている。
+  static const divider = Color(0xFFF5F8FA);
 
   // ── [A03] ボタンの状態 ────────────────────────────────
 

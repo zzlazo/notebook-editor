@@ -46,6 +46,10 @@ abstract final class AppDimens {
   static const buttonBorderWidth = 2.0;
   static const buttonGap = 10.0;
 
+  /// アイコンとラベルは上寄せで、余りが下に来る。
+  static const buttonPaddingTop = 2.0;
+  static const buttonPaddingBottom = 4.0;
+
   // ── 入力欄 ────────────────────────────────────────────
 
   static const inputBorderWidth = 1.0;

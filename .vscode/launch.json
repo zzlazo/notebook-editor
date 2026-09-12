@@ -14,6 +14,13 @@
       "type": "dart",
       "program": "lib/main.dart",
       "toolArgs": ["--dart-define-from-file=.env.local.web"]
+    },
+    {
+      "name": "Gallery (Chrome)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/gallery.dart",
+      "toolArgs": ["--dart-define-from-file=.env.local.web"]
     }
   ]
 }

@@ -1,4 +1,4 @@
-class Env {
+abstract final class Env {
   static const String _notebookAuthority = String.fromEnvironment(
     'NOTEBOOK_AUTHORITY',
   );

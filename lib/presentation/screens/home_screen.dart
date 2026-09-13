@@ -96,39 +96,39 @@ class HomeScreen extends HookConsumerWidget {
 
     final sideberBody = SizedBox(
       width: double.infinity,
-      child: Column(
-        children: [
-          Expanded(
-            child: contents.value == null
-                ? SizedBox.shrink()
-                : ListView.builder(
-                    itemCount: (contents.value!).length,
-                    itemBuilder: (context, index) {
-                      final content = contents.value![index];
-                      return ContentTile(
-                        title: content.title,
-                        selected: selectedContentId.value == content.id,
-                        onTap: () {
-                          selectedContentId.value = content.id;
-                          titleController.text = content.title;
-                          bodyController.text = content.body;
+      // 再取得中やエラー時でも前回の一覧を持っていればそれを優先する。
+      child: switch (contents) {
+        AsyncValue(hasValue: true, requireValue: final items) =>
+          ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final content = items[index];
+              return ContentTile(
+                title: content.title,
+                selected: selectedContentId.value == content.id,
+                onTap: () {
+                  selectedContentId.value = content.id;
+                  titleController.text = content.title;
+                  bodyController.text = content.body;
+                },
+                trailing: isEditingMenu.value
+                    ? AppDeleteButton(
+                        onPressed: () async {
+                          final res = await ref
+                              .read(contentsProvider.notifier)
+                              .delete(content.id);
+                          succeeded(res, "ページの削除に失敗しました");
                         },
-                        trailing: isEditingMenu.value
-                            ? AppDeleteButton(
-                                onPressed: () async {
-                                  final res = await ref
-                                      .read(contentsProvider.notifier)
-                                      .delete(content.id);
-                                  succeeded(res, "ページの削除に失敗しました");
-                                },
-                              )
-                            : null,
-                      );
-                    },
-                  ),
+                      )
+                    : null,
+              );
+            },
           ),
-        ],
-      ),
+        // Riverpod 3 は取得失敗を自動リトライし、その間は AsyncLoading のまま error を持つ。
+        // AsyncError で判定するとリトライを使い切るまで（約 40 秒）表示されない。
+        AsyncValue(hasError: true) => Text("取得に失敗しました"),
+        _ => SizedBox.shrink(),
+      },
     );
 
     final contentArea = content == null

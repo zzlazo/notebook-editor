@@ -7,8 +7,12 @@ import 'package:notebook_editor/api_client/notebook_api_client.dart';
 import 'package:notebook_editor/core/app_error.dart';
 import 'package:notebook_editor/core/result.dart';
 
-NotebookApiClient _clientReturning(http.Response response) =>
-    NotebookApiClient(client: MockClient((_) async => response));
+const _authority = 'test.invalid';
+
+NotebookApiClient _clientReturning(http.Response response) => NotebookApiClient(
+  client: MockClient((_) async => response),
+  authority: _authority,
+);
 
 Matcher _isOk(Object? value) =>
     isA<Ok<Object?>>().having((r) => r.value, 'value', value);
@@ -19,9 +23,7 @@ Matcher _isErr(Matcher error) =>
 void main() {
   group('成功レスポンス', () {
     test('JSON をデコードして返す', () async {
-      final client = _clientReturning(
-        http.Response('[{"id":1}]', 200),
-      );
+      final client = _clientReturning(http.Response('[{"id":1}]', 200));
 
       expect(
         await client.get('content'),
@@ -90,6 +92,7 @@ void main() {
     test('通信が成立しなければ NetworkError', () async {
       final client = NotebookApiClient(
         client: MockClient((_) async => throw http.ClientException('offline')),
+        authority: _authority,
       );
 
       expect(await client.get('content'), _isErr(isA<NetworkError>()));
@@ -104,12 +107,13 @@ void main() {
           sent = request;
           return http.Response('{}', 201);
         }),
+        authority: _authority,
       );
 
       await client.post('content', {'title': '無題', 'body': '本文'});
 
       expect(sent.method, 'POST');
-      expect(sent.url.path, '/content');
+      expect(sent.url, Uri.http(_authority, 'content'));
       expect(sent.headers['Content-Type'], startsWith('application/json'));
       expect(jsonDecode(sent.body), {'title': '無題', 'body': '本文'});
     });
@@ -121,12 +125,13 @@ void main() {
           sent = request;
           return http.Response('', 200);
         }),
+        authority: _authority,
       );
 
       await client.put('content/1', {'title': '無題', 'body': '本文'});
 
       expect(sent.method, 'PUT');
-      expect(sent.url.path, '/content/1');
+      expect(sent.url, Uri.http(_authority, 'content/1'));
       expect(sent.headers['Content-Type'], startsWith('application/json'));
       expect(jsonDecode(sent.body), {'title': '無題', 'body': '本文'});
     });

@@ -9,11 +9,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notebook_api_client.g.dart';
 
 class NotebookApiClient {
-  NotebookApiClient({http.Client? client}) : _client = client ?? http.Client();
+  NotebookApiClient({http.Client? client, String? authority})
+    : _client = client ?? http.Client(),
+      _authority = authority ?? Env.notebookAuthority;
 
   static const _jsonHeaders = {'Content-Type': 'application/json'};
 
   final http.Client _client;
+  final String _authority;
 
   Future<Result<Object?>> get(String path) =>
       _send(() => _client.get(_uri(path)));
@@ -33,7 +36,7 @@ class NotebookApiClient {
 
   void close() => _client.close();
 
-  Uri _uri(String path) => Uri.http(Env.notebookAuthority, path);
+  Uri _uri(String path) => Uri.http(_authority, path);
 
   Future<Result<Object?>> _send(
     Future<http.Response> Function() request,

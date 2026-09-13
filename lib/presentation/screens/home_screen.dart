@@ -55,7 +55,10 @@ class HomeScreen extends HookConsumerWidget {
                     ref
                         .read(contentsProvider.notifier)
                         .create(
-                          CreateContentDTO(title: "無題", body: "新しいページです。"),
+                          CreateContentDTO(
+                            title: "無題",
+                            body: "ここに本文を入力してください。",
+                          ),
                         );
                   },
                 ),

@@ -49,7 +49,7 @@ class PCAppScaffold extends StatelessWidget {
               ],
             ),
           ),
-          VerticalDivider(width: 1, color: AppColors.divider),
+          VerticalDivider(width: AppDimens.dividerWidth, color: AppColors.divider),
           Expanded(
             child: Column(
               children: [

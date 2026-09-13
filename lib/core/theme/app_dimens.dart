@@ -79,5 +79,5 @@ abstract final class AppDimens {
   static const mainVerticalGap = 20.0;
 
   static const contentBodyPadding = 30.0;
-  static const contentTitlePaddingHorizontal = 40.0;
+  static const contentTitlePaddingHorizontal = 30.0;
 }

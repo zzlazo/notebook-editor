@@ -189,7 +189,7 @@ class AppNewPageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppButton.secondary(
       icon: const AppIcon(AppIcons.plus),
-      label: 'New Page',
+      label: 'New page',
       onPressed: onPressed,
     );
   }

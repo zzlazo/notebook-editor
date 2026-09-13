@@ -13,6 +13,7 @@ import 'package:notebook_editor/presentation/components/content_tile.dart';
 import 'package:notebook_editor/presentation/components/main_content_body.dart';
 import 'package:notebook_editor/presentation/components/main_content_section.dart';
 import 'package:notebook_editor/presentation/components/main_content_title.dart';
+import 'package:notebook_editor/presentation/hooks/use_content_editing_state.dart';
 import 'package:notebook_editor/providers/notebook_providers.dart';
 
 class HomeScreen extends HookConsumerWidget {
@@ -28,8 +29,7 @@ class HomeScreen extends HookConsumerWidget {
     final bodyController = useTextEditingController();
     final titleFocusNode = useFocusNode();
     final bodyFocusNode = useFocusNode();
-    final isEditingTitle = useState<bool>(false);
-    final isEditingBody = useState<bool>(false);
+    final editing = useContentEditingState();
     final contents = ref.watch(contentsProvider);
     final isEditingMenu = useState<bool>(false);
     final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
@@ -115,6 +115,7 @@ class HomeScreen extends HookConsumerWidget {
                   if (!context.mounted) return;
                   Scaffold.maybeOf(context)?.closeDrawer();
                   selectedContentId.value = content.id;
+                  editing.reset();
                   titleController.text = content.title;
                   bodyController.text = content.body;
                 },
@@ -124,7 +125,11 @@ class HomeScreen extends HookConsumerWidget {
                           final res = await ref
                               .read(contentsProvider.notifier)
                               .delete(content.id);
-                          succeeded(res, "ページの削除に失敗しました");
+                          if (succeeded(res, "ページの削除に失敗しました") &&
+                              selectedContentId.value == content.id) {
+                            selectedContentId.value = null;
+                            editing.reset();
+                          }
                         },
                       )
                     : null,
@@ -147,7 +152,7 @@ class HomeScreen extends HookConsumerWidget {
         : Column(
             spacing: AppDimens.mainVerticalGap,
             children: [
-              isEditingTitle.value
+              editing.isEditingTitle
                   ? section(
                       main: MainContentTitle(
                         controller: titleController,
@@ -158,7 +163,7 @@ class HomeScreen extends HookConsumerWidget {
                       actions: [
                         AppCancelButton(
                           onPressed: () {
-                            isEditingTitle.value = false;
+                            editing.finishEditingTitle();
                             titleController.text = content.title;
                           },
                         ),
@@ -176,7 +181,7 @@ class HomeScreen extends HookConsumerWidget {
                                       );
                                   // 失敗時は入力を失わないよう、編集モードのまま残す。
                                   if (succeeded(res, "タイトルの保存に失敗しました")) {
-                                    isEditingTitle.value = false;
+                                    editing.finishEditingTitle();
                                   }
                                 }
                               : null,
@@ -192,7 +197,7 @@ class HomeScreen extends HookConsumerWidget {
                       actions: [
                         AppEditButton(
                           onPressed: () {
-                            isEditingTitle.value = true;
+                            editing.startEditingTitle();
                             // 編集用のフィールドは次のビルドで作られるので、それを待ってからフォーカスする。
                             // autofocus だと、別のフィールドにフォーカスがあるときに無視される。
                             WidgetsBinding.instance.addPostFrameCallback(
@@ -203,7 +208,7 @@ class HomeScreen extends HookConsumerWidget {
                       ],
                     ),
               Expanded(
-                child: isEditingBody.value
+                child: editing.isEditingBody
                     ? section(
                         main: MainContentBody(
                           controller: bodyController,
@@ -214,7 +219,7 @@ class HomeScreen extends HookConsumerWidget {
                         actions: [
                           AppCancelButton(
                             onPressed: () {
-                              isEditingBody.value = false;
+                              editing.finishEditingBody();
                               bodyController.text = content.body;
                             },
                           ),
@@ -231,7 +236,7 @@ class HomeScreen extends HookConsumerWidget {
                                           ),
                                         );
                                     if (succeeded(res, "本文の保存に失敗しました")) {
-                                      isEditingBody.value = false;
+                                      editing.finishEditingBody();
                                     }
                                   }
                                 : null,
@@ -247,7 +252,7 @@ class HomeScreen extends HookConsumerWidget {
                         actions: [
                           AppEditButton(
                             onPressed: () {
-                              isEditingBody.value = true;
+                              editing.startEditingBody();
                               WidgetsBinding.instance.addPostFrameCallback(
                                 (_) => bodyFocusNode.requestFocus(),
                               );

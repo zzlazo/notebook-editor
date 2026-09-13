@@ -27,6 +27,7 @@ class HomeScreen extends HookConsumerWidget {
         : ref.watch(contentByIdProvider(selectedContentId.value!));
     final titleController = useTextEditingController();
     final bodyController = useTextEditingController();
+    final bodyScrollController = useScrollController();
     final titleFocusNode = useFocusNode();
     final bodyFocusNode = useFocusNode();
     final editing = useContentEditingState();
@@ -212,6 +213,7 @@ class HomeScreen extends HookConsumerWidget {
                     ? section(
                         main: MainContentBody(
                           controller: bodyController,
+                          scrollController: bodyScrollController,
                           focusNode: bodyFocusNode,
                           isEditing: true,
                           maxLength: BodyValidation.maxLength,
@@ -246,6 +248,7 @@ class HomeScreen extends HookConsumerWidget {
                     : section(
                         main: MainContentBody(
                           controller: bodyController,
+                          scrollController: bodyScrollController,
                           isEditing: false,
                           maxLength: BodyValidation.maxLength,
                         ),

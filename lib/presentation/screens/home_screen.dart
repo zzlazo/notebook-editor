@@ -38,6 +38,7 @@ class HomeScreen extends HookConsumerWidget {
     final titleIsValid = TitleValidation.isValid(titleController.text);
     final bodyIsValid = BodyValidation.isValid(bodyController.text);
     final content = selectedContent?.value;
+    const fetchErrorMessage = "取得に失敗しました";
 
     // ListView の itemBuilder などは context を引数で上書きするため、
     // 削除で消えるタイルの context ではなく、画面の context を使うようにここで束縛する。
@@ -126,13 +127,17 @@ class HomeScreen extends HookConsumerWidget {
           ),
         // Riverpod 3 は取得失敗を自動リトライし、その間は AsyncLoading のまま error を持つ。
         // AsyncError で判定するとリトライを使い切るまで（約 40 秒）表示されない。
-        AsyncValue(hasError: true) => Text("取得に失敗しました"),
+        AsyncValue(hasError: true) => Text(fetchErrorMessage),
         _ => SizedBox.shrink(),
       },
     );
 
+    // モバイルではサイドバーが Drawer に隠れるため、開かなくても気づけるようメインエリアにも出す。
+    final showsFetchErrorInMain =
+        !isPC && !contents.hasValue && contents.hasError;
+
     final contentArea = content == null
-        ? SizedBox.shrink()
+        ? (showsFetchErrorInMain ? Text(fetchErrorMessage) : SizedBox.shrink())
         : Column(
             spacing: AppDimens.mainVerticalGap,
             children: [

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:notebook_editor/api_client/notebook_api_client.dart';
 import 'package:notebook_editor/core/app_error.dart';
+import 'package:notebook_editor/core/result.dart';
 import 'package:notebook_editor/models/content.dart';
 import 'package:notebook_editor/models/create_content_dto.dart';
 import 'package:notebook_editor/models/update_content_dto.dart';
@@ -76,6 +77,11 @@ const _validBody = '新しい本文です。十文字以上あります。';
 Future<List<Content>> _load(ProviderContainer container) =>
     container.read(contentsProvider.future);
 
+final _isOk = isA<Ok<Object?>>();
+
+Matcher _isErr<E extends AppError>() =>
+    isA<Err<Object?>>().having((r) => r.error, 'error', isA<E>());
+
 int _countOf(List<http.Request> requests, String method) =>
     requests.where((r) => r.method == method).length;
 
@@ -106,35 +112,38 @@ void main() {
       final (:container, :requests) = _setUp();
       await _load(container);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .create(const CreateContentDTO(title: _validTitle, body: _validBody));
 
+      expect(res, _isOk);
       final contents = container.read(contentsProvider).requireValue;
       expect(contents.map((c) => c.id), [1, 2, 3]);
       final created = await container.read(contentByIdProvider(3).future);
       expect(created?.title, _validTitle);
     });
 
-    test('失敗しても一覧は変わらない', () async {
+    test('失敗すると Err を返し、一覧は変わらない', () async {
       final (:container, :requests) = _setUp(mutationStatus: 500);
       final before = await _load(container);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .create(const CreateContentDTO(title: _validTitle, body: _validBody));
 
+      expect(res, _isErr<ServerError>());
       expect(container.read(contentsProvider).requireValue, before);
     });
 
-    test('制約を満たさなければリクエストを送らない', () async {
+    test('制約を満たさなければ ValidationError を返し、リクエストを送らない', () async {
       final (:container, :requests) = _setUp();
       final before = await _load(container);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .create(const CreateContentDTO(title: '', body: _validBody));
 
+      expect(res, _isErr<ValidationError>());
       expect(_countOf(requests, 'POST'), 0);
       expect(container.read(contentsProvider).requireValue, before);
     });
@@ -148,13 +157,14 @@ void main() {
       final detail = container.listen(contentByIdProvider(1), (_, _) {});
       await container.read(contentByIdProvider(1).future);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .save(
             1,
             const UpdateContentDTO(title: _validTitle, body: _validBody),
           );
 
+      expect(res, _isOk);
       final contents = container.read(contentsProvider).requireValue;
       expect(contents[0].title, _validTitle);
       expect(contents[0].body, _validBody);
@@ -180,28 +190,30 @@ void main() {
       expect(jsonDecode(put.body), {'title': _validTitle, 'body': _validBody});
     });
 
-    test('失敗しても一覧は変わらない', () async {
+    test('失敗すると Err を返し、一覧は変わらない', () async {
       final (:container, :requests) = _setUp(mutationStatus: 500);
       final before = await _load(container);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .save(
             1,
             const UpdateContentDTO(title: _validTitle, body: _validBody),
           );
 
+      expect(res, _isErr<ServerError>());
       expect(container.read(contentsProvider).requireValue, before);
     });
 
-    test('制約を満たさなければリクエストを送らない', () async {
+    test('制約を満たさなければ ValidationError を返し、リクエストを送らない', () async {
       final (:container, :requests) = _setUp();
       final before = await _load(container);
 
-      await container
+      final res = await container
           .read(contentsProvider.notifier)
           .save(1, const UpdateContentDTO(title: _validTitle, body: '短い'));
 
+      expect(res, _isErr<ValidationError>());
       expect(_countOf(requests, 'PUT'), 0);
       expect(container.read(contentsProvider).requireValue, before);
     });
@@ -214,20 +226,22 @@ void main() {
       final detail = container.listen(contentByIdProvider(1), (_, _) {});
       expect((await container.read(contentByIdProvider(1).future))?.id, 1);
 
-      await container.read(contentsProvider.notifier).delete(1);
+      final res = await container.read(contentsProvider.notifier).delete(1);
 
+      expect(res, _isOk);
       final contents = container.read(contentsProvider).requireValue;
       expect(contents.map((c) => c.id), [2]);
       await container.read(contentByIdProvider(1).future);
       expect(detail.read().requireValue, isNull);
     });
 
-    test('失敗しても一覧は変わらない', () async {
+    test('失敗すると Err を返し、一覧は変わらない', () async {
       final (:container, :requests) = _setUp(mutationStatus: 500);
       final before = await _load(container);
 
-      await container.read(contentsProvider.notifier).delete(1);
+      final res = await container.read(contentsProvider.notifier).delete(1);
 
+      expect(res, _isErr<ServerError>());
       expect(container.read(contentsProvider).requireValue, before);
     });
   });

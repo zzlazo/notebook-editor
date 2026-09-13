@@ -112,6 +112,8 @@ class HomeScreen extends HookConsumerWidget {
                 title: content.title,
                 selected: selectedContentId.value == content.id,
                 onTap: () {
+                  if (!context.mounted) return;
+                  Scaffold.maybeOf(context)?.closeDrawer();
                   selectedContentId.value = content.id;
                   titleController.text = content.title;
                   bodyController.text = content.body;

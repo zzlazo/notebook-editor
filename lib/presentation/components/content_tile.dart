@@ -3,7 +3,6 @@ import 'package:notebook_editor/core/theme/app_colors.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
 import 'package:notebook_editor/core/theme/app_text_styles.dart';
 
-/// サイドバーの一覧項目。幅は親が決める。
 class ContentTile extends StatelessWidget {
   const ContentTile({
     super.key,
@@ -17,27 +16,26 @@ class ContentTile extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
 
-  /// 右端に差し込むウィジェット。何を入れるかは呼び出し側が決める。
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final trailing = this.trailing;
 
-    return Material(
-      color: selected ? AppColors.menuTileSelected : AppColors.surface,
-      borderRadius: BorderRadius.circular(AppDimens.radiusSmall),
-      child: InkWell(
-        onTap: onTap,
+    return SizedBox(
+      height: AppDimens.menuTileHeight,
+      width: AppDimens.menuTileWidth,
+      child: Material(
+        color: selected ? AppColors.menuTileSelected : AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimens.radiusSmall),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppDimens.radiusSmall),
 
-        // 波紋は仕様に無い表現のため出さず、hover と押下は単色で塗る。
-        splashColor: Colors.transparent,
-        hoverColor: AppColors.menuTileHovered,
-        highlightColor: AppColors.menuTilePressed,
+          splashColor: Colors.transparent,
+          hoverColor: AppColors.menuTileHovered,
+          highlightColor: AppColors.menuTilePressed,
 
-        child: SizedBox(
-          height: AppDimens.menuTileHeight,
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppDimens.menuTilePadding,

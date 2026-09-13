@@ -26,13 +26,19 @@ abstract final class AppDimens {
   static const dividerWidth = 1.0;
 
   /// Edit ボタンを置く下部領域の高さ。
-  static const footerHeight = 60.0;
+  static const sideberFooterHeight = 60.0;
+  static const sideberFooterPadding = 10.0;
 
   // ── メインエリア ──────────────────────────────────────
 
-  static const contentMargin = 30.0;
-  static const cardPadding = 30.0;
+  static const contentAreaMarginTop = 30.0;
+  static const contentAreaMarginLeft = 40.0;
+  static const contentAreaMarginRight = 40.0;
+  static const contentAreaPadding = 30.0;
   static const mainBoxAndButtonGap = 20.0;
+
+  static const contentAreaFooterHorizontalMargin = 40.0;
+  static const contentAreaFooterHeight = 60.0;
 
   // ── 角丸 ──────────────────────────────────────────────
 
@@ -71,4 +77,7 @@ abstract final class AppDimens {
   static const inputBorderWidth = 1.0;
 
   static const mainVerticalGap = 20.0;
+
+  static const contentBodyPadding = 30.0;
+  static const contentTitlePaddingHorizontal = 40.0;
 }

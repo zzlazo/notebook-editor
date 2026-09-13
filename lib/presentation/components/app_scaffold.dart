@@ -3,99 +3,174 @@ import 'package:notebook_editor/core/theme/app_colors.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
 import 'package:notebook_editor/presentation/components/service_name.dart';
 
-class AppScaffold extends StatelessWidget {
-  const AppScaffold({
+class PCAppScaffold extends StatelessWidget {
+  const PCAppScaffold({
     super.key,
     required this.sideberBody,
+    required this.sideberFooter,
     required this.contentArea,
   });
 
   final Widget sideberBody;
+  final Widget sideberFooter;
   final Widget contentArea;
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.sizeOf(context).aspectRatio > 1) {
-      return Scaffold(
-        body: Row(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 30, left: 40, right: 10),
-              child: Column(
-                spacing: AppDimens.sideberVerticalGap,
-                children: [
-                  ServiceName(),
-                  Expanded(child: sideberBody),
-                ],
-              ),
-            ),
-            VerticalDivider(width: 1, color: AppColors.divider),
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      color: AppColors.backgroundLight,
-                      margin: EdgeInsets.only(top: 30, left: 40, right: 40),
-                      padding: EdgeInsets.all(30),
-                      child: contentArea,
+    return Scaffold(
+      body: Row(
+        children: [
+          SizedBox(
+            width: AppDimens.sidebarPaddingLeft + AppDimens.menuTileWidth,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: AppDimens.sidebarPaddingTop,
+                      left: AppDimens.sidebarPaddingLeft,
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 40),
-                    height: 60,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: AppDimens.sideberVerticalGap,
                       children: [
-                        Text(
-                          "Copyright © 2021 Sample",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        Text(
-                          "運営会社",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+                        ServiceName(),
+                        Expanded(child: sideberBody),
                       ],
                     ),
                   ),
+                ),
+                Container(
+                  height: AppDimens.sideberFooterHeight,
+                  color: AppColors.backgroundLight,
+                  padding: EdgeInsets.all(AppDimens.sideberFooterPadding),
+                  child: sideberFooter,
+                ),
+              ],
+            ),
+          ),
+          VerticalDivider(width: 1, color: AppColors.divider),
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundLight,
+                      borderRadius: BorderRadius.circular(
+                        AppDimens.radiusLarge,
+                      ),
+                    ),
+                    width: double.infinity,
+                    margin: EdgeInsets.only(
+                      top: AppDimens.contentAreaMarginTop,
+                      left: AppDimens.contentAreaMarginLeft,
+                      right: AppDimens.contentAreaMarginRight,
+                    ),
+                    padding: EdgeInsets.all(AppDimens.contentAreaPadding),
+                    child: contentArea,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: AppDimens.contentAreaFooterHorizontalMargin,
+                  ),
+                  height: AppDimens.contentAreaFooterHeight,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Copyright © 2021 Sample",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        "運営会社",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobileAppScaffold extends StatelessWidget {
+  const MobileAppScaffold({
+    super.key,
+    required this.sideberBody,
+    required this.sideberFooter,
+    required this.contentArea,
+  });
+
+  final Widget sideberBody;
+  final Widget sideberFooter;
+  final Widget contentArea;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: ServiceName()),
+      drawer: Container(
+        width: AppDimens.menuTileWidth,
+        color: AppColors.surface,
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: [
+              Expanded(child: sideberBody),
+              Container(
+                decoration: BoxDecoration(color: AppColors.backgroundLight),
+                height: AppDimens.sideberFooterHeight,
+                padding: EdgeInsets.all(AppDimens.sideberFooterPadding),
+                child: sideberFooter,
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          spacing: AppDimens.mainVerticalGap,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundLight,
+                  borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
+                ),
+                width: double.infinity,
+                margin: EdgeInsets.only(
+                  top: AppDimens.contentAreaMarginTop,
+                  left: AppDimens.contentAreaMarginLeft,
+                  right: AppDimens.contentAreaMarginRight,
+                ),
+                padding: EdgeInsets.all(AppDimens.contentAreaPadding),
+                child: contentArea,
+              ),
+            ),
+            SizedBox(
+              height: AppDimens.contentAreaFooterHeight,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Copyright © 2021 Sample",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text("運営会社", style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
           ],
         ),
-      );
-    }
-    return Scaffold(
-      appBar: AppBar(title: ServiceName()),
-      drawer: sideberBody,
-      body: Column(
-        spacing: 20,
-        children: [
-          Expanded(
-            child: Container(
-              color: AppColors.backgroundLight,
-              margin: EdgeInsets.only(top: 30, left: 40, right: 40),
-              padding: EdgeInsets.all(30),
-              child: contentArea,
-            ),
-          ),
-          SizedBox(
-            height: 60,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Copyright © 2021 Sample",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                Text("運営会社", style: Theme.of(context).textTheme.bodySmall),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

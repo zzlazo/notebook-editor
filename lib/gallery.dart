@@ -24,7 +24,10 @@ class GalleryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: AppTheme.light,
-      home: const Scaffold(backgroundColor: AppColors.surface, body: _Gallery()),
+      home: const Scaffold(
+        backgroundColor: AppColors.surface,
+        body: _Gallery(),
+      ),
     );
   }
 }
@@ -44,30 +47,30 @@ class _Gallery extends StatelessWidget {
           const ServiceName(),
           const SizedBox(height: 40),
           const _Row(
-            title: 'primary / 幅 90',
+            title: 'primary / regular',
             style: AppButtonStyle.primary,
             asset: AppIcons.edit,
             label: 'Edit',
-            width: AppDimens.buttonWidth,
           ),
           const _Row(
-            title: 'primary / 幅なし（最小 40）',
+            title: 'primary / mini',
             style: AppButtonStyle.primary,
             asset: AppIcons.save,
             label: 'Save',
+            sizeType: AppButtonSizeType.mini,
           ),
           const _Row(
-            title: 'secondary / 幅 90',
+            title: 'secondary / regular',
             style: AppButtonStyle.secondary,
             asset: AppIcons.plus,
             label: 'Add',
-            width: AppDimens.buttonWidth,
           ),
           const _Row(
-            title: 'normal / 幅なし（最小 40）',
+            title: 'normal / mini',
             style: AppButtonStyle.normal,
             asset: AppIcons.cancel,
             label: 'Cancel',
+            sizeType: AppButtonSizeType.mini,
           ),
           const Text('AppIconButton（削除）/ 24px'),
           const SizedBox(height: 8),
@@ -91,16 +94,8 @@ class _Gallery extends StatelessWidget {
             width: AppDimens.menuTileWidth,
             child: Column(
               children: [
-                ContentTile(
-                  title: 'こころ',
-                  selected: false,
-                  onTap: () {},
-                ),
-                ContentTile(
-                  title: '坊ちゃん',
-                  selected: true,
-                  onTap: () {},
-                ),
+                ContentTile(title: 'こころ', selected: false, onTap: () {}),
+                ContentTile(title: '坊ちゃん', selected: true, onTap: () {}),
                 ContentTile(
                   title: '我輩は猫である',
                   selected: false,
@@ -136,19 +131,20 @@ class _Gallery extends StatelessWidget {
                     icon: const AppIcon(AppIcons.edit),
                     label: 'Edit',
                     onPressed: () {},
-                    width: AppDimens.buttonWidth,
                   ),
                   const SizedBox(width: AppDimens.buttonGap),
                   AppButton.normal(
                     icon: const AppIcon(AppIcons.cancel),
                     label: 'Cancel',
                     onPressed: () {},
+                    sizeType: AppButtonSizeType.mini,
                   ),
                   const SizedBox(width: AppDimens.buttonGap),
                   AppButton.primary(
                     icon: const AppIcon(AppIcons.save),
                     label: 'Save',
                     onPressed: () {},
+                    sizeType: AppButtonSizeType.mini,
                   ),
                 ],
               ),
@@ -166,14 +162,14 @@ class _Row extends StatelessWidget {
     required this.style,
     required this.asset,
     required this.label,
-    this.width,
+    this.sizeType = AppButtonSizeType.regular,
   });
 
   final String title;
   final AppButtonStyle style;
   final String asset;
   final String label;
-  final double? width;
+  final AppButtonSizeType sizeType;
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +189,7 @@ class _Row extends StatelessWidget {
                   icon: AppIcon(asset),
                   label: label,
                   onPressed: () {},
-                  width: width,
+                  sizeType: sizeType,
                 ),
               ),
               const SizedBox(width: 40),
@@ -204,7 +200,7 @@ class _Row extends StatelessWidget {
                   icon: AppIcon(asset),
                   label: label,
                   onPressed: null,
-                  width: width,
+                  sizeType: sizeType,
                 ),
               ),
             ],

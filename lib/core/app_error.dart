@@ -22,6 +22,11 @@ final class ServerError extends AppError {
   final int statusCode;
 }
 
+/// 送信前の値が制約を満たさなかった。リクエストは送っていない。
+final class ValidationError extends AppError {
+  const ValidationError();
+}
+
 /// レスポンスが期待した形式ではなかった。
 final class ParseError extends AppError {
   const ParseError(this.cause);

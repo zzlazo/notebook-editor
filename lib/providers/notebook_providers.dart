@@ -1,3 +1,4 @@
+import 'package:notebook_editor/core/app_error.dart';
 import 'package:notebook_editor/core/result.dart';
 import 'package:notebook_editor/core/validation.dart';
 import 'package:notebook_editor/models/content.dart';
@@ -19,18 +20,23 @@ class ContentsNotifier extends _$ContentsNotifier {
     };
   }
 
-  Future<void> create(CreateContentDTO createContentDTO) async {
-    if (!_isValid(createContentDTO.title, createContentDTO.body)) return;
+  Future<Result<Content>> create(CreateContentDTO createContentDTO) async {
+    if (!_isValid(createContentDTO.title, createContentDTO.body)) {
+      return const Err(ValidationError());
+    }
     final res = await ref
         .read(notebookRepositoryProvider)
         .createContent(createContentDTO);
     if (res case Ok(:final value)) {
       state = AsyncData([...?state.value, value]);
     }
+    return res;
   }
 
-  Future<void> save(int id, UpdateContentDTO updateContentDTO) async {
-    if (!_isValid(updateContentDTO.title, updateContentDTO.body)) return;
+  Future<Result<void>> save(int id, UpdateContentDTO updateContentDTO) async {
+    if (!_isValid(updateContentDTO.title, updateContentDTO.body)) {
+      return const Err(ValidationError());
+    }
     final res = await ref
         .read(notebookRepositoryProvider)
         .updateContent(id, updateContentDTO);
@@ -46,6 +52,7 @@ class ContentsNotifier extends _$ContentsNotifier {
             content,
       ]);
     }
+    return res;
   }
 
   // UI でも Save を disabled にしているが、サーバーに検証が無いため、
@@ -53,11 +60,12 @@ class ContentsNotifier extends _$ContentsNotifier {
   bool _isValid(String title, String body) =>
       TitleValidation.isValid(title) && BodyValidation.isValid(body);
 
-  Future<void> delete(int id) async {
+  Future<Result<void>> delete(int id) async {
     final res = await ref.read(notebookRepositoryProvider).deleteContent(id);
     if (res case Ok()) {
       state = AsyncData([...?state.value?.where((c) => c.id != id)]);
     }
+    return res;
   }
 }
 

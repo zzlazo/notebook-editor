@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:notebook_editor/core/result.dart';
 import 'package:notebook_editor/core/theme/app_dimens.dart';
 import 'package:notebook_editor/core/validation.dart';
 import 'package:notebook_editor/models/create_content_dto.dart';
@@ -38,6 +39,17 @@ class HomeScreen extends HookConsumerWidget {
     final bodyIsValid = BodyValidation.isValid(bodyController.text);
     final content = selectedContent?.value;
 
+    // ListView の itemBuilder などは context を引数で上書きするため、
+    // 削除で消えるタイルの context ではなく、画面の context を使うようにここで束縛する。
+    bool succeeded(Result<void> res, String failureMessage) {
+      if (res is Ok) return true;
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(failureMessage)));
+      }
+      return false;
+    }
+
     Widget section({required Widget main, required List<Widget> actions}) {
       return isPC
           ? PCMainContentSection(main: main, actions: actions)
@@ -51,8 +63,8 @@ class HomeScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AppNewPageButton(
-                  onPressed: () {
-                    ref
+                  onPressed: () async {
+                    final res = await ref
                         .read(contentsProvider.notifier)
                         .create(
                           CreateContentDTO(
@@ -60,6 +72,7 @@ class HomeScreen extends HookConsumerWidget {
                             body: "ここに本文を入力してください。",
                           ),
                         );
+                    succeeded(res, "ページの作成に失敗しました");
                   },
                 ),
                 AppDoneButton(
@@ -102,10 +115,11 @@ class HomeScreen extends HookConsumerWidget {
                         },
                         trailing: isEditingMenu.value
                             ? AppDeleteButton(
-                                onPressed: () {
-                                  ref
+                                onPressed: () async {
+                                  final res = await ref
                                       .read(contentsProvider.notifier)
                                       .delete(content.id);
+                                  succeeded(res, "ページの削除に失敗しました");
                                 },
                               )
                             : null,
@@ -147,7 +161,7 @@ class HomeScreen extends HookConsumerWidget {
                                         .validate()) {
                                       return;
                                     }
-                                    await ref
+                                    final res = await ref
                                         .read(contentsProvider.notifier)
                                         .save(
                                           selectedContentId.value!,
@@ -156,7 +170,10 @@ class HomeScreen extends HookConsumerWidget {
                                             body: content.body,
                                           ),
                                         );
-                                    isEditingTitle.value = false;
+                                    // 失敗時は入力を失わないよう、編集モードのまま残す。
+                                    if (succeeded(res, "タイトルの保存に失敗しました")) {
+                                      isEditingTitle.value = false;
+                                    }
                                   }
                                 : null,
                           ),
@@ -209,7 +226,7 @@ class HomeScreen extends HookConsumerWidget {
                                           .validate()) {
                                         return;
                                       }
-                                      await ref
+                                      final res = await ref
                                           .read(contentsProvider.notifier)
                                           .save(
                                             selectedContentId.value!,
@@ -218,7 +235,9 @@ class HomeScreen extends HookConsumerWidget {
                                               body: bodyController.text,
                                             ),
                                           );
-                                      isEditingBody.value = false;
+                                      if (succeeded(res, "本文の保存に失敗しました")) {
+                                        isEditingBody.value = false;
+                                      }
                                     }
                                   : null,
                             ),

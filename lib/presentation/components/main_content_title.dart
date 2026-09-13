@@ -9,18 +9,16 @@ class MainContentTitle extends StatelessWidget {
     this.focusNode,
     required this.isEditing,
     required this.maxLength,
-    required this.minLength,
   });
 
   final TextEditingController controller;
   final FocusNode? focusNode;
   final bool isEditing;
   final int maxLength;
-  final int minLength;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       buildCounter: (
         context, {
         required currentLength,
@@ -46,14 +44,6 @@ class MainContentTitle extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
       ),
-      validator: (value) {
-        if (value == null || value.length < minLength) {
-          return "$minLength文字以上にしてください";
-        } else if (value.length > maxLength) {
-          return "$maxLength文字以下にしてください";
-        }
-        return null;
-      },
     );
   }
 }

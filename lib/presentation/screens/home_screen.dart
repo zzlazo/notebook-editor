@@ -32,11 +32,15 @@ class HomeScreen extends HookConsumerWidget {
     final isEditingBody = useState<bool>(false);
     final contents = ref.watch(contentsProvider);
     final isEditingMenu = useState<bool>(false);
-    final titleFormKey = useMemoized(() => GlobalKey<FormState>());
-    final bodyFormKey = useMemoized(() => GlobalKey<FormState>());
     final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
-    final titleIsValid = TitleValidation.isValid(titleController.text);
-    final bodyIsValid = BodyValidation.isValid(bodyController.text);
+    final titleIsValid = useListenableSelector(
+      titleController,
+      () => TitleValidation.isValid(titleController.text),
+    );
+    final bodyIsValid = useListenableSelector(
+      bodyController,
+      () => BodyValidation.isValid(bodyController.text),
+    );
     final content = selectedContent?.value;
     const fetchErrorMessage = "取得に失敗しました";
 
@@ -142,55 +146,46 @@ class HomeScreen extends HookConsumerWidget {
             spacing: AppDimens.mainVerticalGap,
             children: [
               isEditingTitle.value
-                  ? Form(
-                      key: titleFormKey,
-                      child: section(
-                        main: MainContentTitle(
-                          controller: titleController,
-                          focusNode: titleFocusNode,
-                          isEditing: true,
-                          maxLength: TitleValidation.maxLength,
-                          minLength: TitleValidation.minLength,
-                        ),
-                        actions: [
-                          AppCancelButton(
-                            onPressed: () {
-                              isEditingTitle.value = false;
-                              titleController.text = content.title;
-                            },
-                          ),
-                          AppSaveButton(
-                            onPressed: titleIsValid
-                                ? () async {
-                                    if (!titleFormKey.currentState!
-                                        .validate()) {
-                                      return;
-                                    }
-                                    final res = await ref
-                                        .read(contentsProvider.notifier)
-                                        .save(
-                                          selectedContentId.value!,
-                                          UpdateContentDTO(
-                                            title: titleController.text,
-                                            body: content.body,
-                                          ),
-                                        );
-                                    // 失敗時は入力を失わないよう、編集モードのまま残す。
-                                    if (succeeded(res, "タイトルの保存に失敗しました")) {
-                                      isEditingTitle.value = false;
-                                    }
-                                  }
-                                : null,
-                          ),
-                        ],
+                  ? section(
+                      main: MainContentTitle(
+                        controller: titleController,
+                        focusNode: titleFocusNode,
+                        isEditing: true,
+                        maxLength: TitleValidation.maxLength,
                       ),
+                      actions: [
+                        AppCancelButton(
+                          onPressed: () {
+                            isEditingTitle.value = false;
+                            titleController.text = content.title;
+                          },
+                        ),
+                        AppSaveButton(
+                          onPressed: titleIsValid
+                              ? () async {
+                                  final res = await ref
+                                      .read(contentsProvider.notifier)
+                                      .save(
+                                        selectedContentId.value!,
+                                        UpdateContentDTO(
+                                          title: titleController.text,
+                                          body: content.body,
+                                        ),
+                                      );
+                                  // 失敗時は入力を失わないよう、編集モードのまま残す。
+                                  if (succeeded(res, "タイトルの保存に失敗しました")) {
+                                    isEditingTitle.value = false;
+                                  }
+                                }
+                              : null,
+                        ),
+                      ],
                     )
                   : section(
                       main: MainContentTitle(
                         controller: titleController,
                         isEditing: false,
                         maxLength: TitleValidation.maxLength,
-                        minLength: TitleValidation.minLength,
                       ),
                       actions: [
                         AppEditButton(
@@ -207,54 +202,45 @@ class HomeScreen extends HookConsumerWidget {
                     ),
               Expanded(
                 child: isEditingBody.value
-                    ? Form(
-                        key: bodyFormKey,
-                        child: section(
-                          main: MainContentBody(
-                            controller: bodyController,
-                            focusNode: bodyFocusNode,
-                            isEditing: true,
-                            maxLength: BodyValidation.maxLength,
-                            minLength: BodyValidation.minLength,
-                          ),
-                          actions: [
-                            AppCancelButton(
-                              onPressed: () {
-                                isEditingBody.value = false;
-                                bodyController.text = content.body;
-                              },
-                            ),
-                            AppSaveButton(
-                              onPressed: bodyIsValid
-                                  ? () async {
-                                      if (!bodyFormKey.currentState!
-                                          .validate()) {
-                                        return;
-                                      }
-                                      final res = await ref
-                                          .read(contentsProvider.notifier)
-                                          .save(
-                                            selectedContentId.value!,
-                                            UpdateContentDTO(
-                                              title: content.title,
-                                              body: bodyController.text,
-                                            ),
-                                          );
-                                      if (succeeded(res, "本文の保存に失敗しました")) {
-                                        isEditingBody.value = false;
-                                      }
-                                    }
-                                  : null,
-                            ),
-                          ],
+                    ? section(
+                        main: MainContentBody(
+                          controller: bodyController,
+                          focusNode: bodyFocusNode,
+                          isEditing: true,
+                          maxLength: BodyValidation.maxLength,
                         ),
+                        actions: [
+                          AppCancelButton(
+                            onPressed: () {
+                              isEditingBody.value = false;
+                              bodyController.text = content.body;
+                            },
+                          ),
+                          AppSaveButton(
+                            onPressed: bodyIsValid
+                                ? () async {
+                                    final res = await ref
+                                        .read(contentsProvider.notifier)
+                                        .save(
+                                          selectedContentId.value!,
+                                          UpdateContentDTO(
+                                            title: content.title,
+                                            body: bodyController.text,
+                                          ),
+                                        );
+                                    if (succeeded(res, "本文の保存に失敗しました")) {
+                                      isEditingBody.value = false;
+                                    }
+                                  }
+                                : null,
+                          ),
+                        ],
                       )
                     : section(
                         main: MainContentBody(
                           controller: bodyController,
                           isEditing: false,
                           maxLength: BodyValidation.maxLength,
-                          minLength: BodyValidation.minLength,
                         ),
                         actions: [
                           AppEditButton(

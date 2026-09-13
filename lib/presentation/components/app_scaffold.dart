@@ -49,7 +49,10 @@ class PCAppScaffold extends StatelessWidget {
               ],
             ),
           ),
-          VerticalDivider(width: AppDimens.dividerWidth, color: AppColors.divider),
+          VerticalDivider(
+            width: AppDimens.dividerWidth,
+            color: AppColors.divider,
+          ),
           Expanded(
             child: Column(
               children: [
@@ -116,22 +119,30 @@ class MobileAppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: ServiceName()),
-      drawer: Container(
+      // SafeArea を色の箱ごとに内側へ置き、ステータスバーの下は一覧の白、ジェスチャーバーの下は下部の帯の色で埋める。
+      drawer: SizedBox(
         width: AppDimens.menuTileWidth,
-        color: AppColors.surface,
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            children: [
-              Expanded(child: sideberBody),
-              Container(
-                decoration: BoxDecoration(color: AppColors.backgroundLight),
-                height: AppDimens.sideberFooterHeight,
-                padding: EdgeInsets.all(AppDimens.sideberFooterPadding),
-                child: sideberFooter,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ColoredBox(
+                color: AppColors.surface,
+                child: SafeArea(bottom: false, child: sideberBody),
               ),
-            ],
-          ),
+            ),
+            ColoredBox(
+              color: AppColors.backgroundLight,
+              child: SafeArea(
+                top: false,
+                child: Container(
+                  height: AppDimens.sideberFooterHeight,
+                  padding: EdgeInsets.all(AppDimens.sideberFooterPadding),
+                  child: sideberFooter,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: SizedBox(

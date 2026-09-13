@@ -9,6 +9,8 @@ abstract final class AppColors {
   static const textLight = Color(0xFF4D4D4D);
   static const buttonNormal = Color(0xFFB3B3B3);
   static const backgroundLight = Color(0xFFF5F8FA);
+
+  /// どこからも参照していないが、[A01] のカラースキームを写したものとして残している。
   static const backgroundDark = Color(0xFFC8E6FA);
   static const contentBodyBackground = Color(0xFFFFFFFF);
 

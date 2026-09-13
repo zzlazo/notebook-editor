@@ -28,6 +28,7 @@ abstract final class AppTextStyles {
     color: AppColors.textLight,
   );
 
+  /// `labelSmall` に登録しているが読む箇所は無い。[A02] の文字サイズの一覧を写したものとして残している。
   static const minimum = TextStyle(
     fontFamily: fontFamily,
     fontSize: 10,

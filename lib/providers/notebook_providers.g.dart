@@ -33,7 +33,7 @@ final class ContentsNotifierProvider
   ContentsNotifier create() => ContentsNotifier();
 }
 
-String _$contentsNotifierHash() => r'410f8cc8b741227ceb9374a419f542b8e9158172';
+String _$contentsNotifierHash() => r'c26e87b0be025ba6ee8ab7473f64d0c11df42928';
 
 abstract class _$ContentsNotifier extends $AsyncNotifier<List<Content>> {
   FutureOr<List<Content>> build();

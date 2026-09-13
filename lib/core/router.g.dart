@@ -6,19 +6,59 @@ part of 'router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$homeRoute];
+List<RouteBase> get $appRoutes => [$homeShellRoute];
 
-RouteBase get $homeRoute => GoRouteData.$route(
-  path: '/',
-  hasOverriddenOnExit: false,
-  factory: $HomeRoute._fromState,
+RouteBase get $homeShellRoute => ShellRouteData.$route(
+  factory: $HomeShellRouteExtension._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: '/',
+      hasOverriddenOnExit: false,
+      factory: $HomeRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/contents/:id',
+      hasOverriddenOnExit: false,
+      factory: $ContentRoute._fromState,
+    ),
+  ],
 );
+
+extension $HomeShellRouteExtension on HomeShellRoute {
+  static HomeShellRoute _fromState(GoRouterState state) =>
+      const HomeShellRoute();
+}
 
 mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   @override
   String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ContentRoute on GoRouteData {
+  static ContentRoute _fromState(GoRouterState state) =>
+      ContentRoute(id: int.parse(state.pathParameters['id']!));
+
+  ContentRoute get _self => this as ContentRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/contents/${Uri.encodeComponent(_self.id.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

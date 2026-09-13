@@ -13,6 +13,7 @@ class MainContentBody extends StatelessWidget {
     this.focusNode,
     required this.isEditing,
     required this.maxLength,
+    required this.horizontalPadding,
   });
 
   final TextEditingController controller;
@@ -23,6 +24,9 @@ class MainContentBody extends StatelessWidget {
   final FocusNode? focusNode;
   final bool isEditing;
   final int maxLength;
+
+  /// 上下は PC とモバイルで変えないため持たない。
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,10 @@ class MainContentBody extends StatelessWidget {
               textAlignVertical: TextAlignVertical.top,
               style: Theme.of(context).textTheme.bodyMedium,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(AppDimens.contentBodyPadding),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: AppDimens.contentBodyPadding,
+                ),
                 // 編集時の枠はテーマに任せる。
                 // InputDecorator は OutlineInputBorder かどうかで内側の余白を変えるため、閲覧時も InputBorder.none ではなく
                 // テーマと同じ形の枠を線なしで使っている。

@@ -137,7 +137,7 @@ class MobileAppScaffold extends StatelessWidget {
       body: SizedBox(
         width: double.infinity,
         child: Column(
-          spacing: AppDimens.mainVerticalGap,
+          spacing: AppDimens.mobileContentAreaFooterGap,
           children: [
             Expanded(
               child: Container(
@@ -148,10 +148,13 @@ class MobileAppScaffold extends StatelessWidget {
                 width: double.infinity,
                 margin: EdgeInsets.only(
                   top: AppDimens.contentAreaMarginTop,
-                  left: AppDimens.contentAreaMarginLeft,
-                  right: AppDimens.contentAreaMarginRight,
+                  left: AppDimens.mobileContentAreaMarginLeft,
+                  right: AppDimens.mobileContentAreaMarginRight,
                 ),
-                padding: EdgeInsets.all(AppDimens.contentAreaPadding),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimens.mobileContentAreaPaddingHorizontal,
+                  vertical: AppDimens.contentAreaPadding,
+                ),
                 child: contentArea,
               ),
             ),

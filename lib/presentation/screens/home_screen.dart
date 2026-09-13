@@ -34,6 +34,12 @@ class HomeScreen extends HookConsumerWidget {
     final contents = ref.watch(contentsProvider);
     final isEditingMenu = useState<bool>(false);
     final isPC = MediaQuery.sizeOf(context).aspectRatio > 1;
+    final titlePaddingHorizontal = isPC
+        ? AppDimens.contentTitlePaddingHorizontal
+        : AppDimens.mobileContentTitlePaddingHorizontal;
+    final bodyPaddingHorizontal = isPC
+        ? AppDimens.contentBodyPadding
+        : AppDimens.mobileContentBodyPaddingHorizontal;
     final titleIsValid = useListenableSelector(
       titleController,
       () => TitleValidation.isValid(titleController.text),
@@ -151,7 +157,7 @@ class HomeScreen extends HookConsumerWidget {
     final contentArea = content == null
         ? (showsFetchErrorInMain ? Text(fetchErrorMessage) : SizedBox.shrink())
         : Column(
-            spacing: AppDimens.mainVerticalGap,
+            spacing: AppDimens.titleAndBodyGap,
             children: [
               editing.isEditingTitle
                   ? section(
@@ -160,6 +166,7 @@ class HomeScreen extends HookConsumerWidget {
                         focusNode: titleFocusNode,
                         isEditing: true,
                         maxLength: TitleValidation.maxLength,
+                        horizontalPadding: titlePaddingHorizontal,
                       ),
                       actions: [
                         AppCancelButton(
@@ -194,6 +201,7 @@ class HomeScreen extends HookConsumerWidget {
                         controller: titleController,
                         isEditing: false,
                         maxLength: TitleValidation.maxLength,
+                        horizontalPadding: titlePaddingHorizontal,
                       ),
                       actions: [
                         AppEditButton(
@@ -217,6 +225,7 @@ class HomeScreen extends HookConsumerWidget {
                           focusNode: bodyFocusNode,
                           isEditing: true,
                           maxLength: BodyValidation.maxLength,
+                          horizontalPadding: bodyPaddingHorizontal,
                         ),
                         actions: [
                           AppCancelButton(
@@ -251,6 +260,7 @@ class HomeScreen extends HookConsumerWidget {
                           scrollController: bodyScrollController,
                           isEditing: false,
                           maxLength: BodyValidation.maxLength,
+                          horizontalPadding: bodyPaddingHorizontal,
                         ),
                         actions: [
                           AppEditButton(

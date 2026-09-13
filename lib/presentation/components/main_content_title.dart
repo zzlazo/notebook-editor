@@ -9,12 +9,14 @@ class MainContentTitle extends StatelessWidget {
     this.focusNode,
     required this.isEditing,
     required this.maxLength,
+    required this.horizontalPadding,
   });
 
   final TextEditingController controller;
   final FocusNode? focusNode;
   final bool isEditing;
   final int maxLength;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,7 @@ class MainContentTitle extends StatelessWidget {
       maxLines: 1,
       style: Theme.of(context).textTheme.headlineSmall,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppDimens.contentTitlePaddingHorizontal,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         // 閲覧時の枠の理由は MainContentBody と同じ。
         border: isEditing
             ? null

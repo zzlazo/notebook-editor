@@ -40,6 +40,22 @@ abstract final class AppDimens {
   static const contentAreaFooterHorizontalMargin = 40.0;
   static const contentAreaFooterHeight = 60.0;
 
+  /// タイトル行 → 本文カード。
+  static const titleAndBodyGap = 20.0;
+
+  // ── メインエリア（モバイル） ──────────────────────────
+  // 仕様書は PC のみ。PC の値のままだと本文が 1 行 15 文字ほどしか入らないため、横だけ PC の半分にしている。
+  // 縦は詰めると読みにくくなるため PC のトークンをそのまま使う。
+
+  static const mobileContentAreaMarginLeft = 20.0;
+  static const mobileContentAreaMarginRight = 20.0;
+  static const mobileContentAreaPaddingHorizontal = 15.0;
+  static const mobileContentTitlePaddingHorizontal = 15.0;
+  static const mobileContentBodyPaddingHorizontal = 15.0;
+
+  /// 外側カード → フッター。PC はフッターの高さの中で間隔を取っているため持たない。
+  static const mobileContentAreaFooterGap = 20.0;
+
   // ── 角丸 ──────────────────────────────────────────────
 
   /// ボタン / メニュー項目
@@ -75,8 +91,6 @@ abstract final class AppDimens {
   // ── 入力欄 ────────────────────────────────────────────
 
   static const inputBorderWidth = 1.0;
-
-  static const mainVerticalGap = 20.0;
 
   static const contentBodyPadding = 30.0;
   static const contentTitlePaddingHorizontal = 30.0;

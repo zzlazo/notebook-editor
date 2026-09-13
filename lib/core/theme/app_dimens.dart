@@ -2,9 +2,6 @@
 abstract final class AppDimens {
   // ── サイドバー ────────────────────────────────────────
 
-  /// 区切り線の 1px を含む。
-  static const sidebarWidth = 280.0;
-
   static const sidebarPaddingLeft = 40.0;
   static const sidebarPaddingTop = 30.0;
   static const logoSize = 32.0;

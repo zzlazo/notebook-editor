@@ -154,8 +154,17 @@ class HomeScreen extends HookConsumerWidget {
     final showsFetchErrorInMain =
         !isPC && !contents.hasValue && contents.hasError;
 
+    // 読み込み中と一覧が 0 件のときは、選べるものが無いので促さない。
+    final mainMessage = showsFetchErrorInMain
+        ? fetchErrorMessage
+        : contents.hasValue && contents.requireValue.isNotEmpty
+        ? "ページを選択してください"
+        : null;
+
     final contentArea = content == null
-        ? (showsFetchErrorInMain ? Text(fetchErrorMessage) : SizedBox.shrink())
+        ? (mainMessage == null
+              ? SizedBox.shrink()
+              : Center(child: Text(mainMessage)))
         : Column(
             spacing: AppDimens.titleAndBodyGap,
             children: [
